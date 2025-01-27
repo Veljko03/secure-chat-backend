@@ -3,21 +3,11 @@ require("dotenv").config();
 
 const SQL = `
 
-
-CREATE TABLE post (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    title VARCHAR(255) NOT NULL,
-    post_text TEXT NOT NULL,
-    user_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_published BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-);
-
 CREATE TABLE rooms (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    url VARCHAR(255) NOT NULL,
     name TEXT NOT NULL, 
-    expiration_time TIMESTAMP NOT NULL,
+    expiration_in INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
 
@@ -29,7 +19,8 @@ CREATE TABLE users (
 
 CREATE TABLE messages ( 
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    message_text TEXT NOT NULL,
+    client_offset TEXT UNIQUE,
+    content TEXT NOR NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     author_id INTEGER NOT NULL,
     room_id INTEGER NOT NULL,
