@@ -1,0 +1,10 @@
+get http://localhost:3000/
+
+###
+post http://localhost:3000
+Content-Type: "application/json"
+
+{
+    "roomName": "some room name",
+    "expiresIn": "4"
+}

@@ -2,11 +2,10 @@ const { Client } = require("pg");
 require("dotenv").config();
 
 const SQL = `
-
 CREATE TABLE rooms (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     url VARCHAR(255) NOT NULL,
-    name TEXT NOT NULL, 
+    room_name TEXT NOT NULL, 
     expiration_in INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
@@ -20,14 +19,13 @@ CREATE TABLE users (
 CREATE TABLE messages ( 
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     client_offset TEXT UNIQUE,
-    content TEXT NOR NULL,
+    content TEXT NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     author_id INTEGER NOT NULL,
     room_id INTEGER NOT NULL,
     FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (room_id) REFERENCES rooms (id) ON DELETE CASCADE
 );
-
 
 `;
 
