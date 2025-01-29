@@ -1,5 +1,5 @@
-const room = require("./roomRouter");
+const roomRouter = require("./roomsRouter");
 
 module.exports = {
-  room,
+  roomRouter,
 };
