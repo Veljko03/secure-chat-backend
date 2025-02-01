@@ -4,7 +4,7 @@ require("dotenv").config();
 const SQL = `
 CREATE TABLE rooms (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    url VARCHAR(255) NOT NULL,
+    url VARCHAR(255) NOT NULL UNIQUE,
     room_name TEXT NOT NULL, 
     expiration_in INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
@@ -13,7 +13,7 @@ CREATE TABLE rooms (
 CREATE TABLE users (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE messages ( 
@@ -26,6 +26,15 @@ CREATE TABLE messages (
     FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (room_id) REFERENCES rooms (id) ON DELETE CASCADE
 );
+
+CREATE TABLE user_rooms (
+    user_id INTEGER NOT NULL,
+    room_id INTEGER NOT NULL,
+    PRIMARY KEY (user_id, room_id),
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (room_id) REFERENCES rooms (id) ON DELETE CASCADE
+);
+
 
 `;
 

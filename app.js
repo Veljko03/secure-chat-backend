@@ -3,6 +3,7 @@ const { createServer } = require("node:http");
 const cors = require("cors");
 const { roomRouter } = require("./routes");
 const { Server } = require("socket.io");
+const db = require("./db/queries");
 
 const app = express();
 const server = createServer(app);
@@ -17,11 +18,43 @@ app.use(express.json());
 
 app.use("/", roomRouter);
 
-io.on("connection", (socket) => {
-  console.log("a user connected");
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
+io.on("connection", async (socket) => {
+  socket.on("chat-message", async (msg) => {
+    let result;
+    console.log(msg, "message");
+
+    try {
+      // store the message in the database
+      result = await db.createNewMessage(msg.text, msg.userId, msg.roomId);
+    } catch (e) {
+      console.log(e);
+
+      return;
+    }
+    console.log(result, " res.lastId");
+
+    io.emit("chat-message", msg, result.id);
   });
+  // if (!socket.recovered) {
+  //   // if the connection state recovery was not successful
+  //   try {
+  //     console.log("usao u socket recocered ben");
+
+  //     const serverOffset = socket.handshake.auth.serverOffset || 0;
+  //     const result = await db.getMessages(serverOffset);
+
+  //     result.rows.forEach((row) => {
+  //       socket.emit("chat-message", {
+  //         id: row.id,
+  //         text: row.content,
+  //         user: row.author_id,
+  //         timestamp: row.timestamp,
+  //       });
+  //     });
+  //   } catch (e) {
+  //     // something went wrong
+  //   }
+  // }
 });
 
 server.listen(3000, () => {

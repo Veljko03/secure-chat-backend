@@ -27,4 +27,14 @@ const createRoom = async (req, res) => {
   res.json(newRoom);
 };
 
-module.exports = { createRoom, fetchRoomByUrl };
+const addNewUserToRoom = async (req, res) => {
+  const { userName } = req.body;
+  const { url } = req.params;
+  console.log("usao");
+
+  const createRoomUser = await db.createNewRoomUser(userName, url);
+
+  res.json(createRoomUser);
+};
+
+module.exports = { createRoom, fetchRoomByUrl, addNewUserToRoom };
