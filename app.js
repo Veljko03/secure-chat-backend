@@ -21,7 +21,6 @@ app.use("/", roomRouter);
 io.on("connection", async (socket) => {
   socket.on("chat-message", async (msg) => {
     let result;
-    console.log(msg, "message");
 
     try {
       // store the message in the database
@@ -31,30 +30,31 @@ io.on("connection", async (socket) => {
 
       return;
     }
-    console.log(result, " res.lastId");
 
     io.emit("chat-message", msg, result.id);
   });
-  // if (!socket.recovered) {
-  //   // if the connection state recovery was not successful
-  //   try {
-  //     console.log("usao u socket recocered ben");
+  if (!socket.recovered) {
+    // if the connection state recovery was not successful
+    try {
+      console.log("usao u socket recocered ben");
 
-  //     const serverOffset = socket.handshake.auth.serverOffset || 0;
-  //     const result = await db.getMessages(serverOffset);
+      const serverOffset = socket.handshake.auth.serverOffset || 0;
+      const roomId = socket.handshake.auth.roomId;
+      const result = await db.getMessages(serverOffset, roomId);
 
-  //     result.rows.forEach((row) => {
-  //       socket.emit("chat-message", {
-  //         id: row.id,
-  //         text: row.content,
-  //         user: row.author_id,
-  //         timestamp: row.timestamp,
-  //       });
-  //     });
-  //   } catch (e) {
-  //     // something went wrong
-  //   }
-  // }
+      socket.emit("chat-message", result);
+      // result.rows.forEach((row) => {
+      //   socket.emit("chat-message", {
+      //     id: row.id,
+      //     text: row.content,
+      //     user: row.author_id,
+      //     timestamp: row.timestamp,
+      //   });
+      // });
+    } catch (e) {
+      // something went wrong
+    }
+  }
 });
 
 server.listen(3000, () => {

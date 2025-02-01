@@ -53,12 +53,14 @@ async function createNewMessage(text, userId, roomId) {
   }
 }
 
-async function getMessages(serverOffset) {
+async function getMessages(serverOffset, roomId) {
+  console.log(serverOffset, " offset ", roomId);
+
   const result = await pool.query(
-    "SELECT id, content, author_id, timestamp FROM messages WHERE id > $1 ORDER BY id ASC",
-    [serverOffset]
+    "SELECT messages.id,messages.content,messages.timestamp,users.name as userName FROM messages INNER JOIN users ON messages.author_id=users.id WHERE messages.id > $1 AND messages.room_id=$2 ORDER BY messages.id ",
+    [serverOffset, roomId]
   );
-  console.log(result);
+  return result.rows;
 }
 
 module.exports = {
