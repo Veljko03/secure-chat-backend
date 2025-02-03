@@ -36,13 +36,15 @@ io.on("connection", async (socket) => {
   if (!socket.recovered) {
     // if the connection state recovery was not successful
     try {
-      console.log("usao u socket recocered ben");
-
       const serverOffset = socket.handshake.auth.serverOffset || 0;
       const roomId = socket.handshake.auth.roomId;
       const result = await db.getMessages(serverOffset, roomId);
 
-      socket.emit("chat-message", result);
+      console.log(result, " result");
+
+      result.forEach((row) => {
+        socket.emit("chat-message", row);
+      });
       // result.rows.forEach((row) => {
       //   socket.emit("chat-message", {
       //     id: row.id,
