@@ -31,7 +31,7 @@ io.on("connection", async (socket) => {
       return;
     }
 
-    io.emit("chat-message", msg, result.id);
+    io.emit("chat-message", result, result.id);
   });
   if (!socket.recovered) {
     // if the connection state recovery was not successful
@@ -43,7 +43,7 @@ io.on("connection", async (socket) => {
       console.log(result, " result");
 
       result.forEach((row) => {
-        socket.emit("chat-message", row);
+        socket.emit("chat-message", row, row.id);
       });
       // result.rows.forEach((row) => {
       //   socket.emit("chat-message", {

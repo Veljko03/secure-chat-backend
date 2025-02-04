@@ -45,8 +45,13 @@ async function createNewMessage(text, userId, roomId) {
       "INSERT INTO messages (content,author_id,room_id) VALUES ($1,$2,$3) RETURNING *",
       [text, userId, roomId]
     );
+    const messId = result.rows[0].id;
+    const withUsername = await pool.query(
+      "SELECT messages.id,messages.content,messages.timestamp,users.name as userName FROM messages INNER JOIN users ON messages.author_id=users.id WHERE messages.id = $1  ORDER BY messages.id ",
+      [messId]
+    );
 
-    return result.rows[0];
+    return withUsername.rows[0];
   } catch (error) {
     console.error("Error in createNewRoomUser:", error.message);
     return { error: error.message };
