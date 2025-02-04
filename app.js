@@ -19,6 +19,12 @@ app.use(express.json());
 app.use("/", roomRouter);
 
 io.on("connection", async (socket) => {
+  const roomId = socket.handshake.auth.roomId;
+
+  if (roomId) {
+    socket.join(roomId);
+    console.log(`User joined room ${roomId}`);
+  }
   socket.on("chat-message", async (msg) => {
     let result;
 
@@ -31,28 +37,18 @@ io.on("connection", async (socket) => {
       return;
     }
 
-    io.emit("chat-message", result, result.id);
+    io.to(roomId).emit("chat-message", result, result.id);
   });
   if (!socket.recovered) {
     // if the connection state recovery was not successful
     try {
       const serverOffset = socket.handshake.auth.serverOffset || 0;
-      const roomId = socket.handshake.auth.roomId;
       const result = await db.getMessages(serverOffset, roomId);
-
-      console.log(result, " result");
+      console.log("id sove ", roomId);
 
       result.forEach((row) => {
         socket.emit("chat-message", row, row.id);
       });
-      // result.rows.forEach((row) => {
-      //   socket.emit("chat-message", {
-      //     id: row.id,
-      //     text: row.content,
-      //     user: row.author_id,
-      //     timestamp: row.timestamp,
-      //   });
-      // });
     } catch (e) {
       // something went wrong
     }
