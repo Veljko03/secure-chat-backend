@@ -37,21 +37,25 @@ io.on("connection", async (socket) => {
 
       return;
     }
+    console.log("emmitovao ", result);
 
     io.to(roomId).emit("chat-message", result, result.id);
   });
   if (!socket.recovered) {
     // if the connection state recovery was not successful
-    try {
-      const serverOffset = socket.handshake.auth.serverOffset || 0;
-      const result = await db.getMessages(serverOffset, roomId);
-      console.log("id sove ", roomId);
+    if (roomId) {
+      try {
+        const serverOffset = socket.handshake.auth.serverOffset || 0;
+        const result = await db.getMessages(serverOffset, roomId);
+        console.log("id sove ", roomId);
+        console.log(result);
 
-      result.forEach((row) => {
-        socket.emit("chat-message", row, row.id);
-      });
-    } catch (e) {
-      // something went wrong
+        result.forEach((row) => {
+          socket.emit("chat-message", row, row.id);
+        });
+      } catch (e) {
+        // something went wrong
+      }
     }
   }
 });
