@@ -68,10 +68,15 @@ async function getMessages(serverOffset, roomId) {
   return result.rows;
 }
 
+async function deleteRoom() {
+  await pool.query("DELETE FROM rooms WHERE expiration_in <= NOW()");
+}
+
 module.exports = {
   createNewMessage,
   createNewRoom,
   getRoomByUrl,
   createNewRoomUser,
   getMessages,
+  deleteRoom,
 };

@@ -13,6 +13,7 @@ const io = new Server(server, {
   },
 });
 
+require("./controllers/checkingTime");
 app.use(cors());
 app.use(express.json());
 
