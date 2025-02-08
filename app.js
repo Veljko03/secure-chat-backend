@@ -4,12 +4,13 @@ const cors = require("cors");
 const { roomRouter } = require("./routes");
 const { Server } = require("socket.io");
 const db = require("./db/queries");
+require("dotenv").config();
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://secure-chat-app-03.netlify.app",
+    origin: process.env.FRONTEND_URL,
   },
 });
 
