@@ -4,7 +4,9 @@ const cors = require("cors");
 const { roomRouter } = require("./routes");
 const { Server } = require("socket.io");
 const db = require("./db/queries");
-require("dotenv").config();
+require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
+
+console.log(process.env.FRONTEND_URL);
 
 const app = express();
 const server = createServer(app);
