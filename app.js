@@ -34,7 +34,12 @@ io.on("connection", async (socket) => {
 
     try {
       // store the message in the database
-      result = await db.createNewMessage(msg.text, msg.userId, msg.roomId);
+      result = await db.createNewMessage(
+        msg.text,
+        msg.userId,
+        msg.roomId,
+        msg.iv
+      );
     } catch (e) {
       console.log(e);
 

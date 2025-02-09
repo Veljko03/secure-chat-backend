@@ -39,15 +39,15 @@ async function createNewRoomUser(userName, roomURL) {
   }
 }
 
-async function createNewMessage(text, userId, roomId) {
+async function createNewMessage(text, userId, roomId, iv) {
   try {
     const result = await pool.query(
-      "INSERT INTO messages (content,author_id,room_id) VALUES ($1,$2,$3) RETURNING *",
-      [text, userId, roomId]
+      "INSERT INTO messages (content,author_id,room_id,iv) VALUES ($1,$2,$3,$4) RETURNING *",
+      [text, userId, roomId, iv]
     );
     const messId = result.rows[0].id;
     const withUsername = await pool.query(
-      "SELECT messages.id,messages.content,messages.timestamp,users.name as userName FROM messages INNER JOIN users ON messages.author_id=users.id WHERE messages.id = $1  ORDER BY messages.id ",
+      "SELECT messages.id,messages.iv,messages.content,messages.timestamp,users.name as userName FROM messages INNER JOIN users ON messages.author_id=users.id WHERE messages.id = $1  ORDER BY messages.id ",
       [messId]
     );
 
@@ -62,7 +62,7 @@ async function getMessages(serverOffset, roomId) {
   console.log(serverOffset, " offset ", roomId);
 
   const result = await pool.query(
-    "SELECT messages.id,messages.content,messages.timestamp,users.name as userName FROM messages INNER JOIN users ON messages.author_id=users.id WHERE messages.id > $1 AND messages.room_id=$2 ORDER BY messages.id ",
+    "SELECT messages.id,messages.iv,messages.content,messages.timestamp,users.name as userName FROM messages INNER JOIN users ON messages.author_id=users.id WHERE messages.id > $1 AND messages.room_id=$2 ORDER BY messages.id ",
     [serverOffset, roomId]
   );
   return result.rows;
